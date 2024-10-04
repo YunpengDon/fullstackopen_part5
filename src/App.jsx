@@ -2,6 +2,26 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './index.css'
+
+const Notification = ({message}) => {
+  if (message === null) {
+    return null
+  }
+  if (message.type==='error') {
+      return (
+      <div className='error'>
+        {message.text}
+      </div>)
+  }
+  
+  if (message.type==='success') {
+    return(
+    <div className='success'>
+      {message.text}
+    </div>
+  )}
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +32,8 @@ const App = () => {
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
+
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -39,7 +61,11 @@ const App = () => {
       blogService.setToken(user.token)
       console.log(`Successfully log in with ${user.username}`)
     } catch (exception) {
+      setMessage({type: 'error', text: 'Wrong username or password'})
       console.log('Wrong credentials')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000);
     }
   }
 
@@ -81,8 +107,16 @@ const App = () => {
       setBlogAuthor('')
       setBlogUrl('')
       setBlogs(blogs.concat(newblog))
+      setMessage({type: 'success', text: `a new blog ${newblog.title} by ${newblog.author}added`})
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000);
     } catch (error) {
       console.log(error);
+      setMessage({type: 'error', text: error.response.data.error})
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000);
     }
     
   }
@@ -100,6 +134,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={message} />
         {loginForm()}
       </div>
     )
@@ -107,6 +142,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} />
       <div><p>{user.name} logged in <button onClick={handleLogOut}>log out</button></p></div>
       <h2>create new</h2>
       {createForm()}
