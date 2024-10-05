@@ -1,9 +1,9 @@
-import { useState} from "react"
+import { useState } from 'react'
 
-const Blog = ({blog, changeBlog, removeBlog}) => {
+const Blog = ({ blog, changeBlog, removeBlog }) => {
   const [detailVisible, setDetailVisible] = useState(false)
-  const hideWhenVisble = {display: detailVisible ? 'none' : ''}
-  const showWhenVisble = {display: detailVisible ? '' : 'none'}
+  const hideWhenVisble = { display: detailVisible ? 'none' : '' }
+  const showWhenVisble = { display: detailVisible ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -25,9 +25,9 @@ const Blog = ({blog, changeBlog, removeBlog}) => {
       likes: blog.likes + 1,
       user: blog.user.id
     }
-    delete newBlog.id;
+    delete newBlog.id
     changeBlog(blog.id, newBlog)
-    console.log(`likes of ${blog.title} +1 ✌️`);
+    console.log(`likes of ${blog.title} +1 ✌️`)
   }
 
   const handleRemove = (event) => {

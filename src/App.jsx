@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Notification from './components/Notification'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
@@ -12,7 +12,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
+
 
   const [message, setMessage] = useState(null)
 
@@ -38,7 +38,7 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
 
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       setUser(user)
@@ -47,11 +47,11 @@ const App = () => {
       blogService.setToken(user.token)
       console.log(`Successfully log in with ${user.username}`)
     } catch (exception) {
-      setMessage({type: 'error', text: 'Wrong username or password'})
+      setMessage({ type: 'error', text: 'Wrong username or password' })
       console.log('Wrong credentials')
       setTimeout(() => {
         setMessage(null)
-      }, 5000);
+      }, 5000)
     }
   }
 
@@ -60,9 +60,9 @@ const App = () => {
     try {
       window.localStorage.removeItem('loggedBlogUser')
       setUser(null)
-      console.log(`Successfully log out`)
+      console.log('Successfully log out')
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
@@ -70,10 +70,10 @@ const App = () => {
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
-      username <input type="text" value={username} name='Username' onChange={({target})=>setUsername(target.value)}/>
+      username <input type="text" value={username} name='Username' onChange={({ target }) => setUsername(target.value)}/>
       </div>
       <div>
-      password <input type="text" value={password} name='Password' onChange={({target})=>setPassword(target.value)}/>
+      password <input type="text" value={password} name='Password' onChange={({ target }) => setPassword(target.value)}/>
       </div>
       <button type='submit'>login</button>
     </form>
@@ -82,36 +82,36 @@ const App = () => {
   const handleCreate = async (newBlogObject) => {
     try {
       const newblog = await blogService.create(newBlogObject)
-      console.log(`create ${newblog.title}`);
-      
+      console.log(`create ${newblog.title}`)
+
       setBlogs(blogs.concat(newblog))
       blogFormRef.current.toggleVisibility()
-      setMessage({type: 'success', text: `a new blog ${newblog.title} by ${newblog.author}added`})
+      setMessage({ type: 'success', text: `a new blog ${newblog.title} by ${newblog.author}added` })
       setTimeout(() => {
         setMessage(null)
-      }, 5000);
+      }, 5000)
 
     } catch (error) {
-      console.log(error);
-      setMessage({type: 'error', text: error.response.data.error})
+      console.log(error)
+      setMessage({ type: 'error', text: error.response.data.error })
       setTimeout(() => {
         setMessage(null)
-      }, 5000);
+      }, 5000)
     }
   }
 
   const handleChangeLike = async (id, newBlogObject) => {
     try {
       const newblog = await blogService.changeBlog(id, newBlogObject)
-      setBlogs(blogs.map(blog => blog.id === id ? 
-        {...blog, likes: newblog.likes} 
+      setBlogs(blogs.map(blog => blog.id === id ?
+        { ...blog, likes: newblog.likes }
         : blog))
     } catch (error) {
-      console.log(error);
-      setMessage({type: 'error', text: error.response.data.error})
+      console.log(error)
+      setMessage({ type: 'error', text: error.response.data.error })
       setTimeout(() => {
         setMessage(null)
-      }, 5000);
+      }, 5000)
     }
   }
 
@@ -120,11 +120,11 @@ const App = () => {
       await blogService.deleteBlog(id)
       setBlogs(blogs.filter(blog => blog.id !== id ))
     } catch (error) {
-      console.log(error);
-      setMessage({type: 'error', text: error.response.data.error})
+      console.log(error)
+      setMessage({ type: 'error', text: error.response.data.error })
       setTimeout(() => {
         setMessage(null)
-      }, 5000);
+      }, 5000)
     }
   }
 
