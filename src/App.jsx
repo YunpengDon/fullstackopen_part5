@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef} from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
@@ -34,6 +35,7 @@ const App = () => {
   const [blogUrl, setBlogUrl] = useState('')
 
   const [message, setMessage] = useState(null)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -107,6 +109,7 @@ const App = () => {
       setBlogAuthor('')
       setBlogUrl('')
       setBlogs(blogs.concat(newblog))
+      blogFormRef.current.toggleVisibility()
       setMessage({type: 'success', text: `a new blog ${newblog.title} by ${newblog.author}added`})
       setTimeout(() => {
         setMessage(null)
@@ -121,13 +124,18 @@ const App = () => {
     
   }
 
+  const blogFormRef = useRef()
+
   const createForm = () => (
-    <form onSubmit={handleCreate}>
+    <Togglable buttonLabel='new note' ref={blogFormRef}>
+      <h2>create new</h2>
+      <form onSubmit={handleCreate}>
         <div>title <input type="text" value={blogTitle} name='blogTitle' onChange={({target})=>setBlogTitle(target.value)}/></div>
         <div>author <input type="text" value={blogAuthor} name='blogAuthor' onChange={({target})=>setBlogAuthor(target.value)}/></div>
         <div>url <input type="text" value={blogUrl} name='blogUrl' onChange={({target})=>setBlogUrl(target.value)}/></div>
         <button type='submit'>create</button>
       </form>
+    </Togglable>
   )
 
   if (user === null) {
@@ -144,7 +152,6 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} />
       <div><p>{user.name} logged in <button onClick={handleLogOut}>log out</button></p></div>
-      <h2>create new</h2>
       {createForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
