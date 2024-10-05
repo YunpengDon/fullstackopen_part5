@@ -1,29 +1,11 @@
 import { useState, useEffect, useRef} from 'react'
+import Notification from './components/Notification'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
-
-const Notification = ({message}) => {
-  if (message === null) {
-    return null
-  }
-  if (message.type==='error') {
-      return (
-      <div className='error'>
-        {message.text}
-      </div>)
-  }
-  
-  if (message.type==='success') {
-    return(
-    <div className='success'>
-      {message.text}
-    </div>
-  )}
-}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -133,6 +115,19 @@ const App = () => {
     }
   }
 
+  const handleRemoveBlog = async (id) => {
+    try {
+      await blogService.deleteBlog(id)
+      setBlogs(blogs.filter(blog => blog.id !== id ))
+    } catch (error) {
+      console.log(error);
+      setMessage({type: 'error', text: error.response.data.error})
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000);
+    }
+  }
+
   const blogFormRef = useRef()
 
   const createForm = () => (
@@ -157,7 +152,7 @@ const App = () => {
       <div><p>{user.name} logged in <button onClick={handleLogOut}>log out</button></p></div>
       {createForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} changeBlog={handleChangeLike}/>
+        <Blog key={blog.id} blog={blog} changeBlog={handleChangeLike} removeBlog={handleRemoveBlog}/>
       )}
     </div>
   )
