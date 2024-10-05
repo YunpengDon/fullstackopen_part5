@@ -35,10 +35,14 @@ const App = () => {
   const [message, setMessage] = useState(null)
 
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+  useEffect( () => {
+    async function fetchData() {
+      const allBlogs = await blogService.getAll()
+      // sort the blog posts by the number of likes
+      allBlogs.sort((a,b) => b.likes - a.likes)
+      setBlogs(allBlogs)
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
