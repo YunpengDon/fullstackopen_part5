@@ -112,7 +112,21 @@ const App = () => {
         setMessage(null)
       }, 5000);
     }
-    
+  }
+
+  const handleChangeLike = async (id, newBlogObject) => {
+    try {
+      const newblog = await blogService.changeBlog(id, newBlogObject)
+      setBlogs(blogs.map(blog => blog.id === id ? 
+        {...blog, likes: newblog.likes} 
+        : blog))
+    } catch (error) {
+      console.log(error);
+      setMessage({type: 'error', text: error.response.data.error})
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000);
+    }
   }
 
   const blogFormRef = useRef()
@@ -139,7 +153,7 @@ const App = () => {
       <div><p>{user.name} logged in <button onClick={handleLogOut}>log out</button></p></div>
       {createForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} changeBlog={handleChangeLike}/>
       )}
     </div>
   )
